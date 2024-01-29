@@ -1,14 +1,33 @@
 {
-  "name": "grpc-node-static",
+  "name": "grpc-ts-static",
   "version": "1.0.0",
-  "description": "",
-  "type": "commonjs",
-  "scripts": {},
-  "keywords": [],
   "author": "illinois",
-  "license": "ISC",
+  "scripts": {
+    "build": "npx tsc",
+    "start:server": "npx ts-node ./server/index.ts",
+    "start:client": "npx ts-node ./client/index.ts",
+    "gen-proto": "npx grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./pkg --grpc_out=grpc_js:./pkg --ts_out=grpc_js:./pkg -I./proto echo.proto"
+  },
+  "nodemonConfig": {
+    "ext": "js, ts, json, yml, yaml"
+  },
   "dependencies": {
-    "@grpc/grpc-js": "^1.9.8",
-    "google-protobuf": "^3.21.2"
+    "@grpc/grpc-js": "^1.9.14",
+    "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.12.4",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.1",
+    "prettier-plugin-organize-imports": "^3.2.4"
   }
 }
