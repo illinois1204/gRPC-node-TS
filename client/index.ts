@@ -1,14 +1,24 @@
-import { credentials } from "@grpc/grpc-js";
-import { EchoClient } from "../pkg/echo_grpc_pb";
-import { echoRequest } from "../pkg/echo_pb";
-import { PingPongClient } from "../pkg/ping-pong_grpc_pb";
-import { Empty } from "../pkg/ping-pong_pb";
+import { credentials, loadPackageDefinition } from "@grpc/grpc-js";
+import { loadSync } from "@grpc/proto-loader";
+import { ProtoGrpcType as EchoGRPC } from "../pkg/echo";
+import { ProtoGrpcType as PingPongGRPC } from "../pkg/ping-pong";
 
-const EchoStub = new EchoClient("127.0.0.1:8717", credentials.createInsecure());
-const PingPongStub = new PingPongClient("127.0.0.1:8717", credentials.createInsecure());
+const PROTO_PATH = [`${process.cwd()}/proto/echo.proto`, `${process.cwd()}/proto/ping-pong.proto`];
 
-const payload = new echoRequest().setName("illinois").setAge(25);
-EchoStub.ping(payload, (err, res) => console.info(res.getMessage()));
+const packageDefinition = loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+});
+
+const CONTRACTS = loadPackageDefinition(packageDefinition) as unknown as PingPongGRPC & EchoGRPC;
+
+const EchoStub = new CONTRACTS.echo.Echo("127.0.0.1:8717", credentials.createInsecure());
+const PingPongStub = new CONTRACTS.pingPong.PingPong("127.0.0.1:8717", credentials.createInsecure());
+
+// EchoStub.ping({ name: "illinois", age: 25 }, (err, res) => console.info(res?.message));
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const limit = 20;
@@ -23,7 +33,7 @@ playing.on("data", async () => {
     await sleep(500);
     process.stdout.write("Ping......");
     await sleep(1000);
-    playing.write(new Empty());
+    playing.write({});
 });
 process.stdout.write("Ping......");
-playing.write(new Empty());
+playing.write({});
