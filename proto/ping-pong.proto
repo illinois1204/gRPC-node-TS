@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package pingPong;
+
+service PingPong {
+    rpc play (stream Empty) returns (stream Empty) {}
+}
+
+message Empty {}
